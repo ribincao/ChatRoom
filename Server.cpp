@@ -51,6 +51,7 @@ void Server::Run()
 {
     static struct epoll_event events[EPOLL_SIZE];
     Init();
+    Msg msg;
     while(true)
     {
         int events_cnt = epoll_wait(epfd, events, EPOLL_SIZE, -1);
@@ -63,7 +64,6 @@ void Server::Run()
         for(int i = 0;i < events_cnt;i++)
         {
             int sockfd = events[i].data.fd;
-            std::cout << sockfd << " " << fd << std::endl;
             if(sockfd == fd)
             {
                 struct sockaddr_in client_address;
@@ -82,9 +82,10 @@ void Server::Run()
                 std::cout << "Now there are " << client_list.size() << " friends in the chat room." << std::endl;
 
                 char message[BUF_SIZE];
+                sprintf(msg.content, WELCOME, clientfd);
                 bzero(message, BUF_SIZE);
-                sprintf(message, WELCOME, clientfd);
-                int ret = send(clientfd, message, BUF_SIZE, 0);
+                memcpy(message, &msg, sizeof(msg));
+                int ret = send(clientfd, message, sizeof(message), 0);
                 if(ret < 0) {
                     std::cerr << "send" << std::endl;
                     Close();
@@ -128,7 +129,7 @@ int Server::SendBroadcastMessage(int clientfd)
         close(clientfd);
         client_list.remove(clientfd);
         std::cout << "Client #" << clientfd
-                  << "leave the chat room. Now there are "
+                  << " leave the chat room, now there are "
                   << client_list.size()
                   << " friends in the chat room."
                   << std::endl;

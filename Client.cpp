@@ -94,8 +94,9 @@ void Client::Run() {
                     int ret = recv(sock, recv_buf, BUF_SIZE, 0);
                     memset(&msg, 0, sizeof(msg));
                     memcpy(&msg, recv_buf, sizeof(msg));
+                    std::cout << msg.content << std::endl;
                     if(ret == 0) {
-                        std::cout << "Server closed connection: " << sock << std::endl;
+                        std::cout << "Server closed connection: " << std::endl;
                         close(sock);
                         isClientwork = 0;
                     } else {

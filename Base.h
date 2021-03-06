@@ -26,13 +26,14 @@
 #define EXIT "@EXIT"
 #define CAUTION "Only one in the chat room."
 #define ET true
+#define CONTENT_SIZE 0xFFF
 
 struct Msg
 {
     int type;
     int from;
     int to;
-    char content[BUF_SIZE];
+    char content[CONTENT_SIZE];
 };
 
 static void addfd(int epollfd, int fd, bool et_flag)
