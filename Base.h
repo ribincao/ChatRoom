@@ -24,23 +24,26 @@
 #define PRIVATE_MESSAGE "#%d say to you: %s"
 #define PRIVATE_ERROR "#%d is not in chat room yet."
 #define EXIT "@EXIT"
-#define CAUTION "Only one in the chat room."
+#define SINGLE "Only you in the chat room."
 #define ET true
 #define CONTENT_SIZE 0xFFF
 
+//  定义消息结构体
 struct Msg
 {
-    int type;
-    int from;
-    int to;
+    int type;   //  类型, 0 - 群聊, 1 - 私聊
+    int from;   //  发送者 ID
+    int to;     //  接收者 ID
     char content[CONTENT_SIZE];
 };
 
+//  给 epollfd 添加事件
 static void addfd(int epollfd, int fd, bool et_flag)
 {
     struct epoll_event ev;
     ev.data.fd = fd;
     ev.events = EPOLLIN;
+    //  设置边缘触发
     if(et_flag) ev.events |= EPOLLET;
     epoll_ctl(epollfd, EPOLL_CTL_ADD, fd, &ev);
     fcntl(fd, F_SETFL, fcntl(fd, F_GETFD, 0) | O_NONBLOCK);
